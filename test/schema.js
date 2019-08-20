@@ -7,7 +7,7 @@ var PRIMITIVE_TYPES = ['null', 'boolean', 'int', 'long', 'float', 'double', 'byt
 var COMPLEX_TYPES = ['record', 'enum', 'array', 'map', 'union', 'fixed'];
 
 var _parseNamedType = function(schema, namespace) {
-    if (_.contains(PRIMITIVE_TYPES, schema)) {
+    if (_.includes(PRIMITIVE_TYPES, schema)) {
         return schema;
     } else {
         throw new AvroInvalidSchemaError('unknown type name: %s; known type names are ',
@@ -41,7 +41,7 @@ function makeFullyQualifiedTypeName(schema, namespace) {
 
     if (typeName.indexOf('.') !== -1) {
         return typeName;
-    } else if (_.contains(PRIMITIVE_TYPES, typeName)) {
+    } else if (_.includes(PRIMITIVE_TYPES, typeName)) {
         return typeName;
     } else if (_.isString(namespace)) {
         return namespace + '.' + typeName;
@@ -64,7 +64,7 @@ _.extend(Schema.prototype, {
 
     parse: function(schema, namespace) {
         var self = this;
-        if (_.isNull(schema) || _.isUndefined(schema)) {
+        if (_.isNil(schema)) {
             throw new AvroInvalidSchemaError('schema is null, in parentSchema: %s',
                                              JSON.stringify(parentSchema));
         } else if (_.isString(schema)) {
@@ -157,7 +157,7 @@ function PrimitiveSchema(schema, type) {
         throw new AvroInvalidSchemaError('Primitive type name must be a string');
     }
 
-    if (!_.contains(PRIMITIVE_TYPES, type)) {
+    if (!_.includes(PRIMITIVE_TYPES, type)) {
         var record = schema.schemaRecords[type];
 
         if (record) {
@@ -198,7 +198,7 @@ function RecordSchema(name, namespace, fields) {
         throw new AvroInvalidSchemaError('Record name must be string');
     }
 
-    if (!_.isNull(namespace) && !_.isUndefined(namespace) && !_.isString(namespace)) {
+    if (!_.isNil(namespace) && !_.isString(namespace)) {
         throw new AvroInvalidSchemaError('Record namespace must be string or null');
     }
 
@@ -227,7 +227,7 @@ function MapSchema(type) {
 util.inherits(MapSchema, Schema);
 
 function ArraySchema(items) {
-    if (_.isNull(items) || _.isUndefined(items)) {
+    if (_.isNil(items)) {
         throw new AvroInvalidSchemaError('Array "items" schema should not be null or undefined');
     }
 
@@ -254,7 +254,7 @@ function EnumSchema(symbols) {
         throw new AvroInvalidSchemaError('Enum must have array of symbols, got %s',
                                          JSON.stringify(symbols));
     }
-    if (!_.all(symbols, function(symbol) { return _.isString(symbol); })) {
+    if (!_.every(symbols, function(symbol) { return _.isString(symbol); })) {
         throw new AvroInvalidSchemaError('Enum symbols must be strings, got %s',
                                          JSON.stringify(symbols));
     }
